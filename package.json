@@ -1,0 +1,19 @@
+{
+  "name": "tape",
+  "version": "1.0.0",
+  "description": "lua bundler",
+  "main": "index.coffee",
+  "author": "safazi",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "coffeescript": "^2.5.1",
+    "commander": "^7.2.0",
+    "csv-parse": "^4.15.4",
+    "lodash": "^4.17.21",
+    "log": "^6.0.0",
+    "log-node": "^7.0.0",
+    "mustache": "^4.2.0",
+    "toml": "^3.0.0"
+  }
+}
