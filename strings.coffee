@@ -41,7 +41,7 @@ end
 
 MAIN_TEMPLATE = """
 -- entrypoint: {{{name}}}
-require('{{{name}}}')'
+require('{{{name}}}')
 """
 
 BUNDLE_TEMPLATE = """
