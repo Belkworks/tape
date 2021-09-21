@@ -78,7 +78,11 @@ getBundledName = (path, options) ->
 	path
 
 findMain = (assets, entrypoint, options) ->
-	main = "#{entrypoint}#{options.separator}#{options.main}"
+	main = if entrypoint == '.'
+		options.main
+	else 
+		"#{entrypoint}#{options.separator}#{options.main}"
+
 	return main if assets[main]
 
 writeBundle = (bundle, options) ->
