@@ -11,7 +11,7 @@ toLuaKey = (str) ->
 		"[#{s}]"
 	else if str == unwrap s
 		str
-	else s
+	else "[#{s}]"
 
 toLua = (obj) ->
 	return 'nil' if _.isNil obj
