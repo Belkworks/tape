@@ -8,7 +8,7 @@ TOML = require 'toml'
 _ = require 'lodash'
 
 { statSync, readdirSync, readFileSync, writeFileSync, existsSync } = require 'fs'
-{ join, relative, resolve, basename, extname } = require 'path'
+{ join, relative, resolve, basename, extname, sep } = require 'path'
 { execFileSync } = require 'child_process'
 { retLua } = require './src/util'
 { program } = require 'commander'
@@ -67,21 +67,31 @@ readAndTransform = (path) ->
 removeExtension = (path) ->
 	path.substring 0, path.length - (extname path).length
 
-getBundledName = (path, options) ->
+getBundledName = (path, options, entrypoint) ->
+	
 	unless options.keepExtension
 		path = removeExtension path
+
+	if options.namespace
+		parts = path.split sep
+		if parts[0] == entrypoint
+			parts.shift()
+			path = parts.join sep
 
 	unless options.separator == '\\'
 		while path.includes '\\'
 			path = path.replace '\\', options.separator
-
+	
 	path
 
 findMain = (assets, entrypoint, options) ->
 	main = if entrypoint == '.'
 		options.main
-	else 
-		"#{entrypoint}#{options.separator}#{options.main}"
+	else
+		if assets.main
+			'main'
+		else
+			"#{entrypoint}#{options.separator}#{options.main}"
 
 	return main if assets[main]
 
@@ -101,13 +111,17 @@ program
 	.option '-s, --separator <char>', 'module separator character', '/'
 	.option '-p, --prelude <path>', 'file to include before modules'
 	.option '-m, --main <name>', 'name of main', 'main'
-	# .option '--keepExtension', 'keep the file extension', false
+	.option '-n, --namespace', 'drop the namespace of the main target', false
 	.option '-v, --verbose', 'debug logging', false
 
 	.description 'tape bundler',
 		directories: 'the directories to bundle'
 
 	.action (args, options) ->
+		entrypoint = args[0]
+		actual = resolve options.dir
+		assets = {}
+
 		if options.verbose
 			debug = log
 			debug 'bundling will be verbose'
@@ -121,16 +135,16 @@ program
 		files = resolveTargets options.dir, args
 		debug 'finished resolving'
 
-		actual = resolve options.dir
-		
-		assets = {}
+		if options.namespace
+			debug 'dropping namespace', entrypoint
+
 		for f in files
 			content = readAndTransform f
-			name = getBundledName (relative actual, f), options
+			name = getBundledName (relative actual, f), options, entrypoint
 			debug 'bundled', name
 			assets[name] = content
 
-		main = findMain assets, args[0], options
+		main = findMain assets, entrypoint, options
 		unless main
 			throw new Error 'Failed to find main!'
 		else debug 'main is', main
@@ -159,4 +173,7 @@ program
 		writeBundle bundle, options
 		debug 'done'
 
-program.parse()
+try
+	program.parse()
+catch E
+	console.error 'BUNDLE ERROR:', E.message
