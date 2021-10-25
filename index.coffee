@@ -82,6 +82,12 @@ getBundledName = (path, options, entrypoint) ->
 		while path.includes '\\'
 			path = path.replace '\\', options.separator
 	
+	pattern = options.separator + 'main'
+	if options.initify
+		if _.endsWith path, pattern
+			debug 'initified', path
+			path = path.substring 0, path.length - pattern.length
+
 	path
 
 findMain = (assets, entrypoint, options) ->
@@ -111,6 +117,7 @@ program
 	.option '-s, --separator <char>', 'module separator character', '/'
 	.option '-p, --prelude <path>', 'file to include before modules'
 	.option '-m, --main <name>', 'name of main', 'main'
+	.option '-i --initify', 'initify modules', false
 	.option '-n, --namespace', 'drop the namespace of the main target', false
 	.option '-v, --verbose', 'debug logging', false
 
@@ -128,6 +135,7 @@ program
 
 		debug 'base is', options.dir
 		debug 'separator is', options.separator
+		debug 'initify is', options.identity and 'on' or 'off'
 
 		# args are targets: [string]
 		# flags has output: string, dir: string <src>
