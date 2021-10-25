@@ -135,7 +135,7 @@ program
 
 		debug 'base is', options.dir
 		debug 'separator is', options.separator
-		debug 'initify is', options.identity and 'on' or 'off'
+		debug 'initify is', options.initify and 'on' or 'off'
 
 		# args are targets: [string]
 		# flags has output: string, dir: string <src>
