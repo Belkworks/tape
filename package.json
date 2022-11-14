@@ -1,5 +1,5 @@
 {
-	"name": "tape",
+	"name": "tape-lua",
 	"version": "3.0.0",
 	"main": "build/index.js",
 	"scripts": {
