@@ -16,6 +16,9 @@
 	"bin": {
 		"tape": "./build/index.js"
 	},
+	"files": [
+		"build/**/*"
+	],
 	"devDependencies": {
 		"@nihalgonsalves/esconfig": "^0.1.0",
 		"@types/node": "14",
