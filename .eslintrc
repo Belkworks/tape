@@ -1,0 +1,8 @@
+{
+	"extends": ["./node_modules/@nihalgonsalves/esconfig/.eslintrc"],
+	"rules": {
+		"@typescript-eslint/consistent-type-assertions": "off",
+		"@typescript-eslint/require-await": "off",
+		"@typescript-eslint/no-shadow": "off"
+	}
+}
