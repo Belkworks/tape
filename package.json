@@ -1,6 +1,6 @@
 {
 	"name": "tape-lua",
-	"version": "3.0.0",
+	"version": "3.0.0a",
 	"main": "build/index.js",
 	"scripts": {
 		"dev": "ts-node-dev src/index.ts",
