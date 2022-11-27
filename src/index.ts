@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { env } from 'process';
 
 import { Command } from 'commander';
