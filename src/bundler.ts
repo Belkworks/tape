@@ -11,11 +11,36 @@ import {
 	stringifyTree,
 } from './strings';
 
-const ALLOWED_EXTENSIONS = ['.lua', '.json'];
+type TransformerEntry = {
+	ext: string | string[];
+	transform: (content: string, name: string, relative: string) => string;
+};
+
+const TRANSFORMERS: TransformerEntry[] = [
+	{
+		ext: ['.lua', '.luau'],
+		transform: (content, name, rel) => stringifyModule(name, rel, content),
+	},
+	{
+		ext: '.json',
+		transform: (content, name, rel) => stringifyJSON(name, rel, content),
+	},
+	{
+		ext: '.txt',
+		transform: (content, name, rel) => stringifyJSON(name, rel, JSON.stringify(content)),
+	}
+];
+
+const getTransformer = (extension: string) => {
+	return TRANSFORMERS.find(({ ext }) => {
+		if (Array.isArray(ext)) return ext.includes(extension);
+		return ext == extension;
+	});
+}
 
 const shouldBundle = (basename: string) => {
 	const extension = extname(basename);
-	return ALLOWED_EXTENSIONS.includes(extension);
+	return getTransformer(extension) != undefined;
 };
 
 const explore2 = async (directory: string, verbose: boolean, node?: Node) => {
@@ -137,9 +162,15 @@ export const bundle = async (path: string, options: BundleOptions) => {
 		const name = JSON.stringify(rel.replace(/\\/g, '/'));
 		names.set(module, name.substring(1, name.length - 1));
 		const content = await readFile(module.path, 'utf-8');
-		if (ext == '.json') output.push(stringifyJSON(name, rel, content));
-		else output.push(stringifyModule(name, rel, content));
-		if (options.verbose) console.log('bundled', rel);
+
+		const transformer = getTransformer(ext);
+		if (!transformer) {
+			console.warn(`No transformer for '${ext}'`);
+			continue;
+		}
+
+		const chunk = transformer.transform(content, name, rel);
+		output.push(chunk);
 	}
 
 	const makeTree = (node: Node): Tree => {
