@@ -92,4 +92,4 @@ __tape.buildTree(${str})
 `;
 };
 
-export const footerString = 'require("init.lua")';
+export const footerString = 'return require("init.lua")';
