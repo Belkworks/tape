@@ -2,48 +2,35 @@
 export const headerString = `-- bundled with tape`;
 
 export const polyfillString = `
-local __tape = {
-	http = game:GetService('HttpService'),
-	import = require,
-	chunks = {}, -- string -> function
-	cache = {}, -- string -> any
+local __tape = { -- bundled with tape
+	http = game:GetService('HttpService'), chunks = {}, -- string -> function
+	require = require, cache = {}, -- string -> any
 	scripts = {} -- script -> instance -> script
 }
-
 local function require(module)
-	local import = __tape.import
 	if typeof(module) == 'Instance' then
 		local name = __tape.scripts[module]
 		if name then module = name end
 	end
-
 	if typeof(module) ~= 'string' then
-		return import(module)
+		return __tape.require(module)
 	end
 
 	local fn = __tape.chunks[module]
-	if not fn then
-		error(('tape: module %s not found'):format(module))
-	end
+	if not fn then error(('tape: module %s not found'):format(module)) end
 
 	local cache = __tape.cache[module]
-	if cache then
-		return cache.value
-	end
+	if cache then return cache.value end
 
 	local s, e = pcall(fn, __tape.scripts[module])
-	if not s then
-		error(('tape: error executing %s: %s'):format(module, e))
-	end
+	if not s then error(('tape: error executing %s: %s'):format(module, e)) end
 
 	__tape.cache[module] = { value = e }
 	return e
 end
 
 __tape.json = function(str)
-	return function()
-		return __tape.http:JSONDecode(str)
-	end
+	return function() return __tape.http:JSONDecode(str) end
 end
 
 __tape.buildTree = function(str)
