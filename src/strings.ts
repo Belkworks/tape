@@ -76,4 +76,4 @@ __tape.buildTree(${str})
 `;
 };
 
-export const footerString = 'return require("init.lua")';
+export const stringifyFooter = (name: string) => `return require("${name}")`

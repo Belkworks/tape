@@ -3,9 +3,9 @@ import { basename, extname, relative, resolve } from 'path';
 
 import { Node, NodeType } from './node';
 import {
-	footerString,
 	headerString,
 	polyfillString,
+	stringifyFooter,
 	stringifyJSON,
 	stringifyModule,
 	stringifyTree,
@@ -184,8 +184,11 @@ export const bundle = async (path: string, options: BundleOptions) => {
 	const tree = makeTree(initified);
 	output.push(stringifyTree(tree));
 
+	const name = names.get(initified)
+	if (!name) throw new Error('no name for initified node!');
+
 	// append footer
-	output.push(footerString);
+	output.push(stringifyFooter(name));
 
 	// write output
 	const dest = resolve(options.output);
