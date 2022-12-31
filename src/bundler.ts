@@ -110,6 +110,7 @@ const printTree = (node: Node, indent = 0) => {
 type BundleOptions = {
 	verbose: boolean;
 	output: string;
+	experimental: boolean;
 };
 
 type TreeEntry = [string, string | undefined];

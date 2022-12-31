@@ -10,6 +10,7 @@ program
 	.argument('[target]', 'target folder to bundle')
 	.option('-v --verbose', 'enable verbose output', false)
 	.option('-o --output <path>', 'output file', 'dist.lua')
+	.option('-x --experimental', 'enable experimental path naming', false)
 	.helpOption('-h --help', 'display help for tape');
 
 program.parse();
