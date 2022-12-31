@@ -117,6 +117,28 @@ type TreeEntry = [string, string | undefined];
 
 type Tree = [TreeEntry, Tree[]];
 
+const getParent = (node: Node, nodes: Node[]) => nodes.find((n) => n.children.has(node));
+
+const getPathRepresentation = (node: Node, nodes: Node[], separator = '/') => {
+	const parts = [] as string[]
+	let current = node as Node | undefined;
+	while (current) {
+		const parent = getParent(current, nodes);
+		const chunkName = basename(current.basename, extname(current.basename))
+		const isRoot = parent == undefined;
+		const parentIsRoot = parent && getParent(parent, nodes) == undefined;
+
+		if (parentIsRoot) parts.push(chunkName);
+		else if (isRoot && current == node) parts.push('init');
+		else if (isRoot) {}
+		else parts.push(chunkName);
+		
+		current = parent
+	}
+
+	return parts.reverse().join(separator);
+}
+
 export const bundle = async (path: string, options: BundleOptions) => {
 	// resolve path
 	const resolved = resolve(path);
@@ -160,8 +182,10 @@ export const bundle = async (path: string, options: BundleOptions) => {
 	for (const module of modules) {
 		const rel = relative(resolved, module.path);
 		const ext = extname(rel);
-		const name = JSON.stringify(rel.replace(/\\/g, '/'));
-		names.set(module, name.substring(1, name.length - 1));
+
+		const chunkName = options.experimental ? getPathRepresentation(module, entries) : rel.replace(/\\/g, '/');
+		const quotes = JSON.stringify(chunkName);
+		names.set(module, quotes.substring(1, quotes.length - 1));
 		const content = await readFile(module.path, 'utf-8');
 
 		const transformer = getTransformer(ext);
@@ -170,7 +194,7 @@ export const bundle = async (path: string, options: BundleOptions) => {
 			continue;
 		}
 
-		const chunk = transformer.transform(content, name, rel);
+		const chunk = transformer.transform(content, quotes, rel);
 		output.push(chunk);
 	}
 
