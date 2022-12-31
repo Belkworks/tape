@@ -1,8 +1,5 @@
-import { env } from 'process';
 
-const VERSION = env['npm_package_version'] as string;
-
-export const headerString = `-- bundled with tape ${VERSION}`;
+export const headerString = `-- bundled with tape`;
 
 export const polyfillString = `
 local __tape = {
