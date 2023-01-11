@@ -9,5 +9,6 @@
 		"sourceMap": false,
 		"incremental": false,
 		"downlevelIteration": true
-	}
+	},
+	"include": ["src/**/*","types/**/*"]
 }
