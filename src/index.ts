@@ -11,6 +11,7 @@ program
 	.option('-v --verbose', 'enable verbose output', false)
 	.option('-o --output <path>', 'output file', 'dist.lua')
 	.option('-x --experimental', 'enable experimental path naming', false)
+	.option('-m --minify', 'minify output', false)
 	.helpOption('-h --help', 'display help for tape');
 
 program.parse();

@@ -1,4 +1,7 @@
+/// <reference path="../types/lua-format.d.ts" />
+
 import { readdir, readFile, stat, writeFile } from 'fs/promises';
+import { Minify } from 'lua-format';
 import { basename, extname, relative, resolve } from 'path';
 
 import { Node, NodeType } from './node';
@@ -11,15 +14,38 @@ import {
 	stringifyTree,
 } from './strings';
 
+type BundleOptions = {
+	verbose: boolean;
+	output: string;
+	experimental: boolean;
+	minify: boolean;
+};
+
 type TransformerEntry = {
 	ext: string | string[];
-	transform: (content: string, name: string, relative: string) => string;
+	transform: (content: string, name: string, relative: string, opts: BundleOptions) => string;
 };
 
 const TRANSFORMERS: TransformerEntry[] = [
 	{
 		ext: ['.lua', '.luau'],
-		transform: (content, name, rel) => stringifyModule(name, rel, content),
+		transform: (content, name, rel, opts) => {
+			let minified;
+			if (opts.minify)
+				try {
+					
+						minified = Minify(content, {
+							RenameGlobals: false,
+							RenameVariables: false,
+							SolveMath: false
+						}).split('\n').pop()
+				} catch (e) {
+					console.warn('failed to minify', rel, e);
+				}
+
+			return stringifyModule(name, rel, minified ?? content)
+		}
+			
 	},
 	{
 		ext: '.json',
@@ -107,12 +133,6 @@ const printTree = (node: Node, indent = 0) => {
 	if (indent == 0) console.log();
 };
 
-type BundleOptions = {
-	verbose: boolean;
-	output: string;
-	experimental: boolean;
-};
-
 type TreeEntry = [string, string | undefined];
 
 type Tree = [TreeEntry, Tree[]];
@@ -194,7 +214,7 @@ export const bundle = async (path: string, options: BundleOptions) => {
 			continue;
 		}
 
-		const chunk = transformer.transform(content, quotes, rel);
+		const chunk = transformer.transform(content, quotes, rel, options);
 		output.push(chunk);
 	}
 
