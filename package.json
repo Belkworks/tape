@@ -12,7 +12,8 @@
 		"prepack": "pnpm build"
 	},
 	"dependencies": {
-		"commander": "^9.4.1"
+		"commander": "^9.4.1",
+		"lua-format": "^1.4.0"
 	},
 	"bin": {
 		"tape": "./build/index.js"

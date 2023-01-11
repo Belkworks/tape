@@ -5,6 +5,7 @@ specifiers:
   '@types/node': ^14.18.34
   commander: ^9.4.1
   eslint: ^8.29.0
+  lua-format: ^1.4.0
   npm-check-updates: ^12.5.12
   prettier: ^2.8.0
   ts-node-dev: ^1.1.8
@@ -12,6 +13,7 @@ specifiers:
 
 dependencies:
   commander: 9.4.1
+  lua-format: 1.4.0
 
 devDependencies:
   '@nihalgonsalves/esconfig': 0.1.2_x4fmxu3xk26jacyvrarq5vdbpq
@@ -2012,6 +2014,10 @@ packages:
     resolution: {integrity: sha512-ysxwsnTKdAx96aTRdhDOCQfDgbHnt8SK0KY8SEjO0wHinhWOFTESbjVCMPbU1uGXg/ch4lifqx0wfjOawU2+WA==}
     engines: {node: '>=12'}
     dev: true
+
+  /lua-format/1.4.0:
+    resolution: {integrity: sha512-GP5CFcdgop02HgsPnw0p1FeC41FmMdoexgnvDtS2TlqNh4oWuN0piyyEsgOrlN1rAfOHdhjmeTtl7H/lgCgOqA==}
+    dev: false
 
   /make-dir/3.1.0:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
