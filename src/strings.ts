@@ -54,8 +54,7 @@ end
 export const stringifyModule = (name: string, path: string, script: string) => {
 	return `
 -- module: ${path}
-__tape.chunks[${name}] = function(script)
-${script.trim()}
+__tape.chunks[${name}] = function(script)${script ? '\n\t' : ''}${script.trim()}
 end
 `;
 };

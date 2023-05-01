@@ -30,11 +30,11 @@ const TRANSFORMERS: TransformerEntry[] = [
 	{
 		ext: ['.lua', '.luau'],
 		transform: (content, name, rel, opts) => {
-			let minified;
+			let transformed;
 			if (opts.minify)
 				try {
 					
-						minified = Minify(content, {
+						transformed = Minify(content, {
 							RenameGlobals: false,
 							RenameVariables: false,
 							SolveMath: false
@@ -42,8 +42,15 @@ const TRANSFORMERS: TransformerEntry[] = [
 				} catch (e) {
 					console.warn('failed to minify', rel, e);
 				}
+			else
+				transformed = content
+					.split('').filter(c => c !== '\r').join('') // remove \r
+					.split('\n')
+					.map(l => '\t' + l)
+					.map(l => l === '\t' ? '' : l)
+					.join('\n')
 
-			return stringifyModule(name, rel, minified ?? content)
+			return stringifyModule(name, rel, transformed ?? content)
 		}
 			
 	},
@@ -239,7 +246,10 @@ export const bundle = async (path: string, options: BundleOptions) => {
 	await writeFile(
 		dest,
 		output.map((s) => s.trim()).join('\n\n') + '\n',
-		'utf-8',
+		{
+			encoding: 'utf-8',
+			flag: 'w',
+		}
 	);
 
 	console.log('Done!'); // TODO: show time, summary
